@@ -1,0 +1,6 @@
+node_modules/
+dist/
+plugin/com.kyuubisoft.fivem.sdPlugin/bin/
+plugin/com.kyuubisoft.fivem.sdPlugin/logs/
+.DS_Store
+__pycache__/

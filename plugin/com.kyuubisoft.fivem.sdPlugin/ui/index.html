@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src ws://127.0.0.1:*; img-src 'self' data:; style-src 'self'; script-src 'self'">
+<title>KS FiveM · Animationen</title><link rel="stylesheet" href="style.css"></head><body>
+<header><span class="brand">KS <span>FIVEM</span></span><span class="badge" id="status">Nicht verbunden</span></header>
+<main><section class="connection"><p class="eyebrow">VERBINDUNG</p><h1 id="server">Dein Spiel. Deine Tasten.</h1>
+<p id="connection-help">FiveM öffnen und einem Server beitreten. Die Sitzung wird hier automatisch erkannt.</p>
+<div id="session-choice" hidden><label for="session">FiveM-Sitzung</label><select id="session"></select></div>
+<div class="buttons"><button id="connect">Verbinden</button><button id="disconnect" class="secondary" hidden>Trennen</button></div>
+<details id="manual"><summary>Alternativ mit Code koppeln</summary>
+<div class="pair-code" id="pair-code" hidden><span>In F8 eingeben (im Chat mit / davor)</span><code id="code"></code><small id="expires"></small></div>
+<button id="pair" class="secondary">Kopplungscode erzeugen</button></details></section>
+<section><p class="eyebrow">DIESE TASTE</p>
+<label for="command">Beim Drücken</label><select id="command"><option value="toggle">Starten / Stoppen</option><option value="play">Animation starten</option><option value="stop">Aktuelle Animation stoppen</option></select>
+<div id="animation-fields"><label for="search">Animation suchen</label><input id="search" type="search" placeholder="Name oder Stichwort …" autocomplete="off">
+<div class="filter-row"><select id="category" aria-label="Kategorie"><option value="">Alle Kategorien</option></select><button id="favorites-only" class="secondary icon" aria-label="Nur Favoriten" aria-pressed="false">☆</button></div>
+<label for="animation">Animation <span id="count"></span></label><div class="choose-row"><select id="animation"><option value="">Bitte verbinden …</option></select><button id="favorite" class="secondary icon" aria-label="Als Favorit speichern" aria-pressed="false">☆</button></div></div>
+<div class="binding" id="binding" hidden><span id="binding-text"></span><button id="rebind" class="secondary" hidden>Diesem Server zuordnen</button></div>
+<p class="notice" id="notice" role="status" hidden></p>
+</section><footer>Die Taste zeigt den Zustand aus dem Spiel.<br>Keine Befehle nötig. Kein zusätzliches Konto.<br>Version 1.2.0</footer></main>
+<script src="inspector.js"></script></body></html>

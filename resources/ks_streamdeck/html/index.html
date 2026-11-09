@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- CEF's NUI callback hostname contains an underscore, which CSP host-source
+     grammar rejects. HTTPS scheme allows native callbacks; bridge.js fixes the
+     fetch target to GetParentResourceName(), never to network-provided URLs. -->
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'none'; script-src 'self'; connect-src https: ws://127.0.0.1:*"
+        />
+        <title>KS Stream Deck bridge</title>
+    </head>
+    <body>
+        <script src="bridge.js"></script>
+    </body>
+</html>

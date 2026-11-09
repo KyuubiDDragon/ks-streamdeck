@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "UUID": "com.kyuubisoft.fivem",
+  "Name": "KS FiveM Animations",
+  "Author": "KyuubiSoft",
+  "Description": "Standalone FiveM animation controls with local pairing and live status. Requires the ks_streamdeck FiveM resource.",
+  "Version": "1.2.0.0",
+  "SDKVersion": 3,
+  "CodePath": "bin/plugin.js",
+  "Nodejs": {
+    "Version": "20"
+  },
+  "Software": {
+    "MinimumVersion": "7.1"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    },
+    {
+      "Platform": "mac",
+      "MinimumVersion": "13"
+    }
+  ],
+  "Icon": "imgs/plugin",
+  "Category": "KS FiveM Animations",
+  "CategoryIcon": "imgs/category",
+  "Actions": [
+    {
+      "UUID": "com.kyuubisoft.fivem.animation",
+      "Name": "Animation",
+      "Icon": "imgs/action",
+      "PropertyInspectorPath": "ui/index.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Animation auswählen, starten oder stoppen.",
+      "States": [
+        {
+          "Image": "imgs/key",
+          "TitleAlignment": "bottom",
+          "FontSize": 12,
+          "TitleColor": "#e8edf0"
+        }
+      ]
+    }
+  ]
+}
