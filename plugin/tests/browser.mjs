@@ -35,6 +35,12 @@ try {
   });
   await page.goto(new URL('com.kyuubisoft.fivem.sdPlugin/ui/index.html',root).href);
   await page.evaluate(port=>window.connectElgatoStreamDeckSocket(port,'key-1','registerPropertyInspector','{}',JSON.stringify({action:'com.kyuubisoft.fivem.animation',context:'key-1',payload:{settings:{}}})),host.address().port);
+  assert.equal(await page.getByRole('button',{name:'Connect',exact:true}).isDisabled(),true);
+  assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  await page.locator('#language').selectOption('de');
+  await page.getByRole('button',{name:'Verbinden',exact:true}).waitFor();
+  for(let i=0;i<100&&saved?.locale!=='de';i++)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(saved.locale,'de','language choice is persisted');
   assert.equal(await page.getByRole('button',{name:'Verbinden',exact:true}).isDisabled(),true);
   assert.equal(await page.locator('#pair-code').isVisible(),false,'no code required by default');
   await page.locator('summary').click();
@@ -75,6 +81,19 @@ try {
   assert.equal(saved.serverId,'other:30120');assert.equal(saved.animation,'');
   await page.locator('#command').selectOption('stop');
   assert.equal(await page.locator('#animation-fields').isVisible(),false);
+
+  await page.locator('#language').selectOption('en');
+  await page.getByRole('button',{name:'Disconnect',exact:true}).waitFor();
+  assert.equal(await page.locator('#command option[value="stop"]').textContent(),'Stop current animation');
+  assert.equal(await page.locator('#search').getAttribute('placeholder'),'Name or keyword …');
+  for(const width of [280,320,360,480]) {
+    await page.setViewportSize({width,height:820});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`English fits at ${width}`);
+  }
+  // Simulate restoring persisted settings when the inspector is reopened.
+  pi.send(JSON.stringify({event:'didReceiveSettings',payload:{settings:{...saved,locale:'de'}}}));
+  await page.getByRole('button',{name:'Trennen',exact:true}).waitFor();
+  assert.equal(await page.locator('html').getAttribute('lang'),'de');
 
   // Use the unmodified NUI bridge in a real Chromium secure context. This checks
   // WebSocket/CSP transport, but does not claim to test FiveM's customized CEF.

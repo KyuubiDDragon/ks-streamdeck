@@ -51,10 +51,10 @@ StreamDeckAdapter.install({
     end,
     canPlay = function(entry)
         if IsLimited() then
-            return false, 'Emotes derzeit gesperrt.'
+            return false, 'Emotes are currently blocked.'
         end
         if entry.canGroup and IsControlPressed(0, 47) then
-            return false, 'Gruppenanimation bitte im Spiel starten.'
+            return false, 'Please start group animations in the game.'
         end
         return true
     end,

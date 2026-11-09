@@ -236,9 +236,14 @@ check(
     not registry:register(
         'test',
         'invalid',
-        { catalog = remote(function()
-            return {}
-        end), play = {}, stop = function() end, current = function() end }
+        {
+            catalog = remote(function()
+                return {}
+            end),
+            play = {},
+            stop = function() end,
+            current = function() end,
+        }
     ),
     'non-callable callbacks rejected'
 )

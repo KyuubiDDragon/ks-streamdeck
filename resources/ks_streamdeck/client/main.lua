@@ -6,7 +6,9 @@ local seen, seenCount = {}, 0
 
 local function notify(message)
     BeginTextCommandThefeedPost('STRING')
-    AddTextComponentSubstringPlayerName(('Stream Deck: ' .. tostring(message)):sub(1, 250))
+    AddTextComponentSubstringPlayerName(
+        ('Stream Deck: ' .. tostring(StreamDeckText(message))):sub(1, 250)
+    )
     EndTextCommandThefeedPostTicker(false, false)
 end
 
@@ -20,36 +22,36 @@ function KSStreamDeck.canPlay()
     if state then
         for _, key in ipairs(cfg.BlockedStates or {}) do
             if state[key] == true then
-                return false, 'Animation derzeit gesperrt.'
+                return false, 'Animations are currently blocked.'
             end
         end
         for _, key in ipairs(cfg.DenyFalseStates or {}) do
             if state[key] == false then
-                return false, 'Animation derzeit gesperrt.'
+                return false, 'Animations are currently blocked.'
             end
         end
     end
     if not NetworkIsPlayerActive(PlayerId()) or not DoesEntityExist(ped) then
-        return false, 'Charakter nicht bereit.'
+        return false, 'Character is not ready.'
     end
     if IsEntityDead(ped) or IsPedFatallyInjured(ped) then
-        return false, 'Charakter ist bewusstlos.'
+        return false, 'Character is unconscious.'
     end
     if IsPedInAnyVehicle(ped, false) then
-        return false, 'Animation im Fahrzeug nicht verfügbar.'
+        return false, 'Animation is unavailable in a vehicle.'
     end
     if IsPedRagdoll(ped) or IsPedFalling(ped) or IsPedSwimming(ped) or IsPedCuffed(ped) then
-        return false, 'Animation derzeit nicht möglich.'
+        return false, 'Animation is not possible right now.'
     end
     if not IsPlayerControlOn(PlayerId()) or IsPauseMenuActive() then
-        return false, 'Spielsteuerung derzeit gesperrt.'
+        return false, 'Player controls are currently blocked.'
     end
     if cfg.BlockWhileUIFocused and IsNuiFocused() then
-        return false, 'Bitte zuerst das geöffnete Menü schließen.'
+        return false, 'Please close the open menu first.'
     end
     local ok, allowed, message = pcall(cfg.CanPlay)
     if not ok or allowed ~= true then
-        return false, message or 'Animation derzeit gesperrt.'
+        return false, message or 'Animations are currently blocked.'
     end
     return true
 end
@@ -63,7 +65,7 @@ function KSStreamDeck.snapshot()
     return {
         catalog = KSStreamDeck.registry.catalog,
         active = KSStreamDeck.registry:current(),
-        blocked = not allowed and message or nil,
+        blocked = not allowed and StreamDeckText(message) or nil,
     }
 end
 local function sendSnapshot()
@@ -75,6 +77,7 @@ local function configure()
         type = 'config',
         enabled = cfg.Enabled,
         port = cfg.Port,
+        locale = cfg.Locale,
         server = {
             id = endpoint .. (cfg.ServerId ~= '' and ('/' .. cfg.ServerId) or ''),
             label = cfg.ServerLabel,
@@ -94,7 +97,7 @@ RegisterNUICallback('connection', function(data, cb)
         KSStreamDeck.connected = connected
         seen, seenCount = {}, 0
         if connected then
-            notify('Verbunden. Animationen sind auf dem Stream Deck verfügbar.')
+            notify('Connected. Animations are available on Stream Deck.')
         end
     end
     cb({ ok = true })
@@ -104,12 +107,12 @@ RegisterNUICallback('connection', function(data, cb)
 end)
 RegisterNUICallback('notice', function(data, cb)
     local messages = {
-        wrong_code = 'Der Kopplungscode stimmt nicht.',
-        pairing_required = 'Bitte im Stream-Deck-Plugin auf Verbinden klicken.',
-        session_in_use = 'Bereits mit einer anderen Sitzung verbunden. Zuerst im Plugin trennen.',
-        unavailable = 'Stream Deck öffnen und im Plugin auf Verbinden klicken.',
-        disconnected = 'Verbindung getrennt.',
-        invalid_hello = 'Bitte das aktuelle KS FiveM Stream-Deck-Plugin installieren.',
+        wrong_code = 'The pairing code is incorrect.',
+        pairing_required = 'Please click Connect in the Stream Deck plugin.',
+        session_in_use = 'Already connected to another session. Disconnect in the plugin first.',
+        unavailable = 'Open Stream Deck and click Connect in the plugin.',
+        disconnected = 'Disconnected.',
+        invalid_hello = 'Please install the latest KS FiveM Stream Deck plugin.',
     }
     if messages[data.message] then
         notify(messages[data.message])
@@ -118,11 +121,11 @@ RegisterNUICallback('notice', function(data, cb)
 end)
 RegisterNUICallback('execute', function(data, cb)
     if not cfg.Enabled or not KSStreamDeck.connected then
-        cb({ ok = false, message = 'Nicht verbunden.' })
+        cb({ ok = false, message = StreamDeckText('Not connected.') })
         return
     end
     if type(data.id) ~= 'string' or #data.id > 64 or seen[data.id] then
-        cb({ ok = false, message = 'Ungültige oder wiederholte Aktion.' })
+        cb({ ok = false, message = StreamDeckText('Invalid or repeated action.') })
         return
     end
     if seenCount >= 2048 then
@@ -134,14 +137,14 @@ RegisterNUICallback('execute', function(data, cb)
             end
         end
         if seenCount >= 2048 then
-            cb({ ok = false, message = 'Zu viele Aktionen.' })
+            cb({ ok = false, message = StreamDeckText('Too many actions.') })
             return
         end
     end
     seen[data.id], seenCount = GetGameTimer(), seenCount + 1
     local remaining = math.min(3000, math.max(0, tonumber(data.remainingMs) or 0))
     if remaining <= 0 then
-        cb({ ok = false, message = 'Aktion abgelaufen.' })
+        cb({ ok = false, message = StreamDeckText('Action expired.') })
         return
     end
     local generation, deadline = KSStreamDeck.generation, GetGameTimer() + remaining
@@ -151,7 +154,7 @@ RegisterNUICallback('execute', function(data, cb)
             or generation ~= KSStreamDeck.generation
             or GetGameTimer() > deadline
         then
-            return false, 'Aktion abgelaufen.'
+            return false, 'Action expired.'
         end
         return KSStreamDeck.canPlay()
     end
@@ -162,13 +165,17 @@ RegisterNUICallback('execute', function(data, cb)
         data.animation,
         guard
     )
-    cb({ ok = ok and result == true, message = ok and message or 'Animationsfehler.' })
+    cb({
+        ok = ok and result == true,
+        message = not ok and StreamDeckText('Animation error.')
+            or (message and StreamDeckText(message)),
+    })
     sendSnapshot()
 end)
 
 local function commandHandler(_, args)
     if not cfg.Enabled then
-        notify('Auf diesem Server deaktiviert.')
+        notify('Disabled on this server.')
         return
     end
     local code = args[1] or ''
@@ -176,16 +183,18 @@ local function commandHandler(_, args)
         SendNUIMessage({ type = 'disconnect' })
         KSStreamDeck.connected = false
         KSStreamDeck.generation = KSStreamDeck.generation + 1
-        notify('Verbindung getrennt.')
+        notify('Disconnected.')
         return
     end
     if code == 'status' then
-        notify(KSStreamDeck.connected and 'Verbunden.' or 'Nicht verbunden.')
+        notify(KSStreamDeck.connected and 'Connected.' or 'Not connected.')
         return
     end
     if not code:match('^%d%d%d%d%d%d$') then
         notify(
-            'Im Stream-Deck-Plugin auf Verbinden klicken. Alternativ: /' .. cfg.Command .. ' CODE.'
+            StreamDeckText('Click Connect in the Stream Deck plugin. Alternatively: /')
+                .. cfg.Command
+                .. ' CODE.'
         )
         return
     end
@@ -200,7 +209,7 @@ end
 exports('RegisterAnimationProvider', function(id, provider)
     local owner = GetInvokingResource()
     if not owner then
-        return false, 'Aufruf aus einer Resource erforderlich.'
+        return false, 'Must be called from a resource.'
     end
     return KSStreamDeck.registry:register(owner, id, provider)
 end)

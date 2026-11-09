@@ -24,8 +24,8 @@ local builtin = {
         for _, anim in ipairs(cfg.Animations) do
             items[#items + 1] = {
                 id = anim.id,
-                label = anim.label,
-                category = anim.category,
+                label = StreamDeckText(anim.label),
+                category = StreamDeckText(anim.category),
                 keywords = anim.keywords,
             }
         end
@@ -53,7 +53,7 @@ local builtin = {
             end
         end
         if not anim then
-            return false, 'Animation nicht gefunden.'
+            return false, 'Animation not found.'
         end
         RequestAnimDict(anim.dict)
         local deadline = GetGameTimer() + 1500
@@ -62,7 +62,7 @@ local builtin = {
         end
         if not HasAnimDictLoaded(anim.dict) then
             RemoveAnimDict(anim.dict)
-            return false, 'Animation konnte nicht geladen werden.'
+            return false, 'Could not load the animation.'
         end
         local allowed, reason = guard()
         if not allowed then
@@ -90,12 +90,12 @@ local builtin = {
             local valid = guard()
             if not valid then
                 stopBuiltin()
-                return false, 'Aktion abgebrochen.'
+                return false, 'Action cancelled.'
             end
         until IsEntityPlayingAnim(ped, anim.dict, anim.clip, 3) or GetGameTimer() >= started
         if not IsEntityPlayingAnim(ped, anim.dict, anim.clip, 3) then
             stopBuiltin()
-            return false, 'Animation konnte nicht gestartet werden.'
+            return false, 'Could not start the animation.'
         end
         return true
     end,

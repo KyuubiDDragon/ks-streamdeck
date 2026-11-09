@@ -2,7 +2,7 @@ import streamDeck, { action, SingletonAction, type KeyDownEvent, type WillAppear
 import { Bridge } from './bridge.mjs';
 import { keyImage, keyState } from './presentation.mjs';
 
-type Settings = { serverId?: string; animation?: string; command?: string; favorites?: string[] };
+type Settings = { locale?: string; serverId?: string; animation?: string; command?: string; favorites?: string[] };
 const bridge = new Bridge();
 const renderCache = new Map<string, string>();
 const settingsCache = new Map<string, Settings>();

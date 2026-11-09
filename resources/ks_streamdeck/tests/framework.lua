@@ -8,11 +8,13 @@ end
 exports = {
     ['qb-core'] = {
         GetCoreObject = function()
-            return { Functions = {
-                GetPlayerData = function()
-                    return data
-                end,
-            } }
+            return {
+                Functions = {
+                    GetPlayerData = function()
+                        return data
+                    end,
+                },
+            }
         end,
     },
     qbx_core = {

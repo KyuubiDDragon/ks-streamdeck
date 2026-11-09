@@ -206,6 +206,7 @@ exports = setmetatable({}, {
     end,
 })
 load('config.lua')
+load('client/locales.lua')
 load('client/framework.lua')
 load('client/main.lua')
 load('client/providers.lua')
@@ -225,6 +226,27 @@ check(#KSStreamDeck.registry.catalog == 2, 'external catalog hides builtin fallb
 check(not KSStreamDeck.registry.entries['builtin:wave'], 'hidden fallback cannot execute')
 TriggerEvent('onResourceStop', 'external_test')
 check(#KSStreamDeck.registry.catalog == 5, 'builtin returns after external resource stops')
+check(KSStreamDeck.registry.entries['builtin:wave'] ~= nil, 'stable builtin IDs in English')
+local function waveLabel()
+    for _, item in ipairs(KSStreamDeck.registry.catalog) do
+        if item.id == 'builtin:wave' then
+            return item.label
+        end
+    end
+end
+check(waveLabel() == 'Wave', 'builtin labels default to English')
+StreamDeckConfig.Locale = 'de'
+KSStreamDeck.registry:refresh()
+check(waveLabel() == 'Winken', 'German builtin labels')
+dead = true
+check(KSStreamDeck.snapshot().blocked == 'Charakter ist bewusstlos.', 'German player-state message')
+StreamDeckConfig.Locale = 'en'
+check(
+    KSStreamDeck.snapshot().blocked == 'Character is unconscious.',
+    'English player-state message'
+)
+dead = false
+KSStreamDeck.registry:refresh()
 local id = 0
 local function command(action, animation)
     id = id + 1
@@ -244,7 +266,9 @@ focused = false
 dead = true
 check(not command('play', 'builtin:wave').ok, 'dead player blocked')
 dead = false
-check(command('play', 'builtin:wave').ok, 'builtin animation begins')
+local started = command('play', 'builtin:wave')
+check(started.ok, 'builtin animation begins')
+check(started.message == nil, 'successful execution has no error message')
 check(KSStreamDeck.snapshot().active == 'builtin:wave', 'native playing state reflected')
 animTask = nil
 check(KSStreamDeck.snapshot().active == nil, 'natural animation ending reflected')

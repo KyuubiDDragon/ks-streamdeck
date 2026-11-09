@@ -73,7 +73,7 @@ function StreamDeckAdapter.create(driver)
             return true
         end
         if driver.canStop and not driver.canStop() then
-            return false, 'Animationssystem erlaubt derzeit kein Stoppen.'
+            return false, 'The animation system does not allow stopping right now.'
         end
         local old, oldPed = active, ped
         local result, reason = driver.stop(old)
@@ -85,7 +85,7 @@ function StreamDeckAdapter.create(driver)
             Wait(10)
         end
         if playing(old, oldPed) then
-            return false, 'Animationssystem hat die Animation nicht beendet.'
+            return false, 'The animation system did not stop the animation.'
         end
         active, ped = nil, nil
         return true
@@ -93,7 +93,7 @@ function StreamDeckAdapter.create(driver)
     function api.canPlay(id)
         local entry = entries[id]
         if not entry then
-            return false, 'Animation nicht verfügbar.'
+            return false, 'Animation is unavailable.'
         end
         if driver.canPlay then
             return driver.canPlay(entry)
@@ -105,7 +105,7 @@ function StreamDeckAdapter.create(driver)
         api.catalog()
         local entry = entries[id]
         if not entry then
-            return false, 'Animation nicht verfügbar.'
+            return false, 'Animation is unavailable.'
         end
         local allowed, reason = api.canPlay(id)
         if not allowed then
@@ -122,7 +122,7 @@ function StreamDeckAdapter.create(driver)
                 Wait(10)
             end
             if not HasAnimDictLoaded(entry.dict) then
-                return false, 'Animation konnte nicht geladen werden.'
+                return false, 'Could not load the animation.'
             end
         end
         allowed, reason = guard()
@@ -141,7 +141,7 @@ function StreamDeckAdapter.create(driver)
             allowed, reason = guard()
             if not allowed or PlayerPedId() ~= startingPed then
                 api.stop()
-                return false, reason or 'Charakter hat gewechselt.'
+                return false, reason or 'Character changed.'
             end
             if playing(entry, startingPed) then
                 return true
@@ -149,7 +149,7 @@ function StreamDeckAdapter.create(driver)
             Wait(10)
         until GetGameTimer() >= deadline
         active, ped = nil, nil
-        return false, 'Animation wurde vom Animationssystem nicht gestartet.'
+        return false, 'The animation system did not start the animation.'
     end
     return api
 end

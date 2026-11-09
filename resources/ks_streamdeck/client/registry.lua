@@ -20,18 +20,18 @@ function StreamDeckRegistry.new()
     end
     function self:register(owner, id, provider)
         if not validId(id) or type(owner) ~= 'string' or type(provider) ~= 'table' then
-            return false, 'Ungültiger Anbieter.'
+            return false, 'Invalid provider.'
         end
         if self.providers[id] and self.providers[id].owner ~= owner then
-            return false, 'Anbieter bereits belegt.'
+            return false, 'Provider is already registered.'
         end
         for _, key in ipairs({ 'catalog', 'play', 'stop', 'current' }) do
             if not callable(provider[key]) then
-                return false, 'Anbieter benötigt ' .. key
+                return false, 'Provider requires ' .. key
             end
         end
         if provider.canPlay ~= nil and not callable(provider.canPlay) then
-            return false, 'Anbieter benötigt eine aufrufbare canPlay-Prüfung.'
+            return false, 'Provider requires a callable canPlay check.'
         end
         self.providers[id] = { owner = owner, api = provider }
         self:refresh()
@@ -113,7 +113,7 @@ function StreamDeckRegistry.new()
             if ok and current then
                 local success, result, message = pcall(provider.api.stop)
                 if not success or result == false then
-                    return false, message or 'Animation konnte nicht gestoppt werden.'
+                    return false, message or 'Could not stop the animation.'
                 end
             end
         end
@@ -121,14 +121,14 @@ function StreamDeckRegistry.new()
     end
     function self:execute(command, animation, guard)
         if self.busy then
-            return false, 'Eine Animation wird gerade geladen.'
+            return false, 'An animation is loading.'
         end
         if command ~= 'play' and command ~= 'toggle' and command ~= 'stop' then
-            return false, 'Ungültige Aktion.'
+            return false, 'Invalid action.'
         end
         local entry = self.entries[animation]
         if command ~= 'stop' and not entry then
-            return false, 'Animation nicht verfügbar.'
+            return false, 'Animation is unavailable.'
         end
         if command == 'stop' or (command == 'toggle' and self:current() == animation) then
             return self:stop()
@@ -141,13 +141,13 @@ function StreamDeckRegistry.new()
         if provider.api.canPlay then
             local ok, ready, message = pcall(provider.api.canPlay, entry.animation)
             if not ok or ready ~= true then
-                return false, message or 'Animation derzeit nicht verfügbar.'
+                return false, message or 'Animation is currently unavailable.'
             end
         end
         local originalGuard = guard
         guard = function()
             if self.providers[entry.provider] ~= provider or not self.entries[animation] then
-                return false, 'Animationsanbieter wurde neu gestartet.'
+                return false, 'Animation provider was restarted.'
             end
             return originalGuard()
         end
@@ -168,10 +168,10 @@ function StreamDeckRegistry.new()
                     tostring(success)
                 )
             )
-            return false, 'Animationsanbieter hat einen Fehler gemeldet.'
+            return false, 'Animation provider reported an error.'
         end
         if success ~= true then
-            return false, message or 'Animation konnte nicht gestartet werden.'
+            return false, message or 'Could not start the animation.'
         end
         return true
     end

@@ -223,7 +223,7 @@
                     remainingMs: Math.max(0, message.expiresAt - Date.now()),
                 });
             } catch {
-                result = { ok: false, message: 'Keine Antwort vom Animationsskript.' };
+                result = { ok: false, message: config?.locale === 'de' ? 'Keine Antwort vom Animationsskript.' : 'No response from the animation script.' };
             }
             if (
                 currentEpoch === epoch &&

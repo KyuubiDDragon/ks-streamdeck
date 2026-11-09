@@ -4,7 +4,7 @@
   "Name": "KS FiveM Animations",
   "Author": "KyuubiSoft",
   "Description": "Standalone FiveM animation controls with local pairing and live status. Requires the ks_streamdeck FiveM resource.",
-  "Version": "1.2.0.0",
+  "Version": "1.3.0.0",
   "SDKVersion": 3,
   "CodePath": "bin/plugin.js",
   "Nodejs": {
@@ -36,7 +36,7 @@
         "Keypad"
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Animation auswählen, starten oder stoppen.",
+      "Tooltip": "Select, start or stop an animation.",
       "States": [
         {
           "Image": "imgs/key",

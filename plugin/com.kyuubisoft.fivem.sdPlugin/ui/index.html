@@ -1,21 +1,22 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src ws://127.0.0.1:*; img-src 'self' data:; style-src 'self'; script-src 'self'">
-<title>KS FiveM · Animationen</title><link rel="stylesheet" href="style.css"></head><body>
-<header><span class="brand">KS <span>FIVEM</span></span><span class="badge" id="status">Nicht verbunden</span></header>
-<main><section class="connection"><p class="eyebrow">VERBINDUNG</p><h1 id="server">Dein Spiel. Deine Tasten.</h1>
-<p id="connection-help">FiveM öffnen und einem Server beitreten. Die Sitzung wird hier automatisch erkannt.</p>
-<div id="session-choice" hidden><label for="session">FiveM-Sitzung</label><select id="session"></select></div>
-<div class="buttons"><button id="connect">Verbinden</button><button id="disconnect" class="secondary" hidden>Trennen</button></div>
-<details id="manual"><summary>Alternativ mit Code koppeln</summary>
-<div class="pair-code" id="pair-code" hidden><span>In F8 eingeben (im Chat mit / davor)</span><code id="code"></code><small id="expires"></small></div>
-<button id="pair" class="secondary">Kopplungscode erzeugen</button></details></section>
-<section><p class="eyebrow">DIESE TASTE</p>
-<label for="command">Beim Drücken</label><select id="command"><option value="toggle">Starten / Stoppen</option><option value="play">Animation starten</option><option value="stop">Aktuelle Animation stoppen</option></select>
-<div id="animation-fields"><label for="search">Animation suchen</label><input id="search" type="search" placeholder="Name oder Stichwort …" autocomplete="off">
-<div class="filter-row"><select id="category" aria-label="Kategorie"><option value="">Alle Kategorien</option></select><button id="favorites-only" class="secondary icon" aria-label="Nur Favoriten" aria-pressed="false">☆</button></div>
-<label for="animation">Animation <span id="count"></span></label><div class="choose-row"><select id="animation"><option value="">Bitte verbinden …</option></select><button id="favorite" class="secondary icon" aria-label="Als Favorit speichern" aria-pressed="false">☆</button></div></div>
-<div class="binding" id="binding" hidden><span id="binding-text"></span><button id="rebind" class="secondary" hidden>Diesem Server zuordnen</button></div>
+<title>KS FiveM · Animations</title><link rel="stylesheet" href="style.css"></head><body>
+<header><span class="brand">KS <span>FIVEM</span></span><span class="badge" id="status">Not connected</span></header>
+<main><label for="language">Language</label><select id="language"><option value="en">English</option><option value="de">Deutsch</option></select><section class="connection"><p class="eyebrow">CONNECTION</p><h1 id="server">Your game. Your keys.</h1>
+<p id="connection-help">Open FiveM and join a server. Your session will appear here automatically.</p>
+<div id="session-choice" hidden><label for="session">FiveM session</label><select id="session"></select></div>
+<div class="buttons"><button id="connect">Connect</button><button id="disconnect" class="secondary" hidden>Disconnect</button></div>
+<details id="manual"><summary>Pair with a code instead</summary>
+<div class="pair-code" id="pair-code" hidden><span>Enter in F8 (prefix with / in chat)</span><code id="code"></code><small id="expires"></small></div>
+<button id="pair" class="secondary">Generate pairing code</button></details></section>
+<section><p class="eyebrow">THIS KEY</p>
+<label for="command">On press</label><select id="command"><option value="toggle">Start / Stop</option><option value="play">Start animation</option><option value="stop">Stop current animation</option></select>
+<div id="animation-fields"><label for="search">Find animation</label><input id="search" type="search" placeholder="Name or keyword …" autocomplete="off">
+<div class="filter-row"><select id="category" aria-label="Category"><option value="">All categories</option></select><button id="favorites-only" class="secondary icon" aria-label="Favorites only" aria-pressed="false">☆</button></div>
+<label for="animation">Animation <span id="count"></span></label><div class="choose-row"><select id="animation"><option value="">Please connect …</option></select><button id="favorite" class="secondary icon" aria-label="Save as favorite" aria-pressed="false">☆</button></div></div>
+<div class="binding" id="binding" hidden><span id="binding-text"></span><button id="rebind" class="secondary" hidden>Assign to this server</button></div>
 <p class="notice" id="notice" role="status" hidden></p>
-</section><footer>Die Taste zeigt den Zustand aus dem Spiel.<br>Keine Befehle nötig. Kein zusätzliches Konto.<br>Version 1.2.0</footer></main>
+</section><footer>The key reflects the state in your game.<br>No commands needed. No extra account.<br>Version 1.3.0</footer></main>
+<script src="locales.js"></script>
 <script src="inspector.js"></script></body></html>

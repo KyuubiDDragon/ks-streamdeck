@@ -8,7 +8,7 @@ local function register()
     exports.ks_streamdeck:RegisterAnimationProvider('my_emotes', {
         catalog = function()
             return {
-                { id = 'wave', label = 'Winken', category = 'Gesten', keywords = 'wave hallo' },
+                { id = 'wave', label = 'Wave', category = 'Gestures', keywords = 'wave hallo' },
             }
         end,
         current = function()
@@ -17,7 +17,7 @@ local function register()
         end,
         play = function(id, canContinue)
             if id ~= 'wave' then
-                return false, 'Animation nicht vorhanden.'
+                return false, 'Animation does not exist.'
             end
             -- Your implementation must call canContinue() after any Wait/loading,
             -- immediately before starting. Return true only on actual start.

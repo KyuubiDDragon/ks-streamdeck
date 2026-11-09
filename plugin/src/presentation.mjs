@@ -1,11 +1,12 @@
 const escape = value => String(value).replace(/[<>&"']/g, char => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[char]);
 export function keyState(settings, view) {
-  if (!view.connected) return { title: 'Nicht\nverbunden', state: 'offline' };
-  if (!settings.serverId || (settings.command !== 'stop' && !settings.animation)) return { title: 'Animation\nwählen', state: 'offline' };
-  if (settings.serverId !== view.server.id) return { title: 'Anderer\nServer', state: 'offline' };
-  if (settings.command === 'stop') return { title: 'Animation\nstoppen', state: view.snapshot.active ? 'stop' : 'idle' };
+  const t = (en, de) => settings.locale === 'de' ? de : en;
+  if (!view.connected) return { title: t('Not\nconnected', 'Nicht\nverbunden'), state: 'offline' };
+  if (!settings.serverId || (settings.command !== 'stop' && !settings.animation)) return { title: t('Select\nanimation', 'Animation\nwählen'), state: 'offline' };
+  if (settings.serverId !== view.server.id) return { title: t('Different\nserver', 'Anderer\nServer'), state: 'offline' };
+  if (settings.command === 'stop') return { title: t('Stop\nanimation', 'Animation\nstoppen'), state: view.snapshot.active ? 'stop' : 'idle' };
   const entry = view.snapshot.catalog.find(item => item.id === settings.animation);
-  if (!entry) return { title: 'Nicht\nverfügbar', state: 'offline' };
+  if (!entry) return { title: t('Not\navailable', 'Nicht\nverfügbar'), state: 'offline' };
   const active = view.snapshot.active === entry.id;
   return { title: entry.label, state: active ? 'active' : view.snapshot.blocked ? 'blocked' : 'idle' };
 }

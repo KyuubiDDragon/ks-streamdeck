@@ -133,7 +133,7 @@ test('key state follows actual snapshot, never another server or vanished animat
   assert.equal(keyState(settings, view).state, 'idle');
   view.snapshot.active = 'builtin:wave'; assert.equal(keyState(settings, view).state, 'active');
   assert.equal(keyState({ ...settings, serverId: 'other' }, view).state, 'offline');
-  assert.equal(keyState({ ...settings, animation: 'deleted' }, view).title, 'Nicht\nverfügbar');
+  assert.equal(keyState({ ...settings, animation: 'deleted' }, view).title, 'Not\navailable');
   assert.ok(keyImage('active').startsWith('data:image/svg+xml,'));
 });
 
@@ -184,4 +184,10 @@ test('large provider catalogs fit the standalone limit and excessive catalogs ar
   const snapshot = {catalog,active:null,blocked:null};
   assert.equal(parseSnapshot(snapshot).catalog.length,10000);
   assert.throws(() => parseSnapshot({...snapshot,catalog:[...catalog,{id:'emotes:overflow',label:'Overflow',category:'Emotes'}]}), /invalid_catalog/);
+});
+
+test('key status defaults to English and supports persisted German selection', () => {
+  assert.equal(keyState({}, {connected:false}).title, 'Not\nconnected');
+  assert.equal(keyState({locale:'de'}, {connected:false}).title, 'Nicht\nverbunden');
+  assert.equal(keyState({locale:'unsupported'}, {connected:false}).title, 'Not\nconnected');
 });

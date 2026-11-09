@@ -14,6 +14,7 @@ with zipfile.ZipFile(resource) as source, zipfile.ZipFile(bundle,'w',zipfile.ZIP
         if not entry.is_dir(): target.writestr('FiveM/'+entry.filename,source.read(entry))
     target.write(plugin,'StreamDeck/'+plugin.name)
     target.write(root/'README.md','README.md')
+    target.write(root/'README.de.md','README.de.md')
     assert target.testzip() is None
 for artifact in (plugin,resource,bundle):
     checksum=hashlib.sha256(artifact.read_bytes()).hexdigest()

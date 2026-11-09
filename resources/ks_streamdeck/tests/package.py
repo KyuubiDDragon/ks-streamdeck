@@ -19,6 +19,7 @@ with zipfile.ZipFile(args.output,'w',zipfile.ZIP_DEFLATED) as archive:
     guide = root/'README.md'
     if not guide.exists(): guide = root.parents[1]/'README.md'
     archive.write(guide, 'ks_streamdeck/README.md')
+    archive.write(guide.with_name('README.de.md'), 'ks_streamdeck/README.de.md')
     assert archive.testzip() is None
 checksum = hashlib.sha256(args.output.read_bytes()).hexdigest()
 args.output.with_suffix('.zip.sha256').write_text(f'{checksum}  {args.output.name}\n')

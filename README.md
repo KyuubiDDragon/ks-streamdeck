@@ -1,38 +1,48 @@
-# KS Stream Deck für FiveM
+# KS Stream Deck for FiveM
 
-Animationen der aktuellen FiveM-Sitzung mit einem Elgato Stream Deck auslösen und stoppen. Die Verbindung erfolgt über **Verbinden**, ohne Chatbefehl. Ressource und Desktop-Plugin sind unabhängig von einem Freeroam-Mod oder einem bestimmten Framework.
+[English](README.md) · [Deutsch](README.de.md)
+
+Start and stop animations in your current FiveM session with an Elgato Stream Deck. Click **Connect** to link the session without a chat command. The FiveM resource and companion desktop plugin work independently of a freeroam resource or a specific framework.
 
 ## Installation
 
-Voraussetzungen: FiveM unter Windows, Stream Deck Software ab 7.1 und Zugriff auf die Ressourcen des FiveM-Servers. Es sind weder ein zusätzliches Konto noch Datenbank, API-Schlüssel oder Portfreigabe erforderlich. Das Plugin kommuniziert ausschließlich lokal über Port 39175.
+You need FiveM on Windows, Stream Deck software 7.1 or later, a compatible Stream Deck device, and access to the server's resource configuration. No additional account, database, API key or port forwarding is required. The desktop connection uses localhost port 39175.
 
-1. Das Bundle aus den **Releases** dieses Repositorys herunterladen und entpacken.
-2. Den Ordner `FiveM/ks_streamdeck` in den Ressourcenordner des Servers kopieren. Den Namen `ks_streamdeck` beibehalten.
-3. In `config.lua` den `ServerLabel` auf den eigenen Servernamen setzen. Für einen ersten Test können `Provider = 'auto'` und `Framework = 'auto'` bleiben.
-4. In der `server.cfg` ergänzen:
+1. Download and extract the bundle from this repository's **Releases**.
+2. Copy `FiveM/ks_streamdeck` into your server's resources folder. Keep the resource name `ks_streamdeck`.
+3. Set `ServerLabel` in `config.lua` to your server's name. Leave `Provider = 'auto'` and `Framework = 'auto'` for an initial test.
+4. Add this line to `server.cfg`:
 
    ```cfg
    ensure ks_streamdeck
    ```
 
-5. Die Datei im Ordner `StreamDeck` doppelt anklicken und mit der Stream Deck Software installieren.
-6. FiveM starten und dem Server beitreten. Die Aktion **Animation** aus **KS FiveM Animations** auf eine Taste ziehen, ihre Einstellungen öffnen und **Verbinden** anklicken. Bei mehreren Sitzungen die gewünschte auswählen.
-7. Eine Animation auswählen. Die Taste startet sie; erneutes Drücken stoppt die zugehörige laufende Animation.
+5. Double-click the `.streamDeckPlugin` file in the `StreamDeck` folder to install the companion plugin.
+6. Start FiveM and join your server. Add the **Animation** action from **KS FiveM Animations** to a Stream Deck key. Open its settings and click **Connect**. Select a session if more than one is available.
+7. Select an animation. Press the key to start it and press again to stop that animation. Dedicated start and stop actions are also available.
 
-Ohne eingebundenes Animationssystem stehen die fünf Beispiele aus `config.lua` zur Verfügung. Beim Start eines registrierten Animationsanbieters ersetzt dessen Katalog diese Beispiele. Die Ressource enthält keine fremden Animationspakete.
+Without an animation adapter, the resource offers five example animations from `config.lua`. When an external provider registers, its catalog replaces these fallback examples. Third-party animation packages are not included.
 
-## Vorhandenes Animationssystem einbinden
+## Languages
 
-| Animationssystem | Adapter | Schnittstelle |
+English is the default language.
+
+- **Stream Deck:** select **English** or **Deutsch** in the action's **Language** field. The choice is saved per key and applies to its settings panel and key status labels.
+- **FiveM:** set `Locale = 'en'` or `Locale = 'de'` in `config.lua`, then restart the resource. This controls in-game messages, built-in animation labels and errors reported by the resource.
+- **External animation names:** labels come from the installed provider. Configure that provider's language separately; the bridge does not translate arbitrary catalog entries or custom provider errors.
+
+## Connect an existing animation system
+
+| Animation system | Adapter | Expected interface |
 | --- | --- | --- |
 | RPEmotes Reborn | `rpemotes.lua` | `EmoteData`, `EmoteType`, `EmoteCommandStart` |
-| Ältere RPEmotes-Versionen | `rpemotes.lua` | `RP`-Katalog und `EmoteCommandStart` |
-| Original dpEmotes | `dpemotes.lua` | `DP`-Katalog und `EmoteMenuStart` |
+| Older RPEmotes versions | `rpemotes.lua` | `RP` catalog and `EmoteCommandStart` |
+| Original dpEmotes | `dpemotes.lua` | `DP` catalog and `EmoteMenuStart` |
 | scully_emotemenu | `scully.lua` | `Emotes`, `Scenarios`, `PlayEmoteByCommand` |
-| ks_animations | automatisch | optionaler bestehender Anbieter |
-| Eigenes System oder abweichender Fork | eigenes Adapter-Skript | Beispiele unter `examples/` |
+| ks_animations | automatic | optional existing provider |
+| Custom systems or modified forks | custom adapter | examples in `examples/` |
 
-Im `fxmanifest.lua` **der Animationsressource** am Ende, nach deren eigenen Client-Skripten, ergänzen. Beispiel für RPEmotes:
+Add the following at the end of **your animation resource's** `fxmanifest.lua`, after its existing client scripts. This example uses RPEmotes:
 
 ```lua
 client_scripts {
@@ -41,81 +51,81 @@ client_scripts {
 }
 ```
 
-Für dpEmotes oder Scully nur die zweite Zeile durch den passenden Dateinamen aus der Tabelle ersetzen. Pro Animationsressource genau einen Adapter laden. Die Adapter gehören nicht als zusätzliche Client-Skripte in das Manifest von `ks_streamdeck`: Sie benötigen die lokalen Funktionen und Kataloge des Animationssystems.
+For dpEmotes or Scully, replace only the second filename with the adapter listed above. Load exactly one adapter per animation resource. These scripts need access to the animation system's local functions and catalog, so do not add them to the `ks_streamdeck` client script list.
 
-Startreihenfolge beispielsweise:
+Example start order:
 
 ```cfg
 ensure ks_streamdeck
 ensure rpemotes-reborn
 ```
 
-Bei Änderungen beide Ressourcen neu starten. Umbenannte Animationsressourcen werden unter ihrem tatsächlichen Namen registriert. Mehrere Anbieter können nebeneinander verwendet werden. Geschützte Ressourcen ohne Zugriff auf Manifest oder passende Schnittstellen benötigen eine vom Anbieter freigegebene Integration.
+Restart both resources after changing their manifests. Renamed animation resources register under their actual names. Multiple providers can coexist. Protected resources without editable manifests or suitable interfaces require an integration approved by their developer.
 
-Die Adapter übergeben die Ausführung an das jeweilige Animationssystem, damit dessen Props und Aufräumlogik erhalten bleiben. Unterstützt werden geeignete Einzelanimationen, Tänze, Props und Szenarien. Paaranimationen, Gruppenaktionen, Verbrauchsgegenstände, Gesichtsausdrücke und Gangarten sind nicht Bestandteil dieser Steuerung. Tieranimationen erscheinen nur, wenn das jeweilige System sie erlaubt. Die Statusanzeige verfolgt Animationen, die über den Adapter gestartet wurden.
+Adapters delegate playback to the installed animation system so it continues to manage props and cleanup. They expose suitable solo emotes, dances, props and scenarios. Paired animations, group actions, consumable items, expressions and walk styles are outside this integration's scope. Animal animations are exposed only when enabled by the provider. Status tracking covers animations started through the adapter.
 
-Nicht jeder Fork hat dieselben Schnittstellen. Die Tabelle beschreibt die vorgesehenen Verträge; beliebige private oder veränderte Systeme werden über einen eigenen Adapter angebunden. Eine pauschale Kompatibilität mit jedem Animationssystem besteht nicht.
+Forks may change these interfaces. The table describes the contracts targeted by the adapters, not a guarantee that every version or private fork works unchanged. Use a custom adapter for incompatible systems.
 
-## QBCore, Qbox, ESX und eigene Regeln
+## QBCore, Qbox, ESX and custom restrictions
 
-`Framework = 'auto'` erkennt `qbx_core`, `qb-core` oder `es_extended`, andernfalls läuft die Ressource ohne Framework. Bei mehreren installierten Frameworks gilt diese Reihenfolge. Ein Framework stellt die Spielerzustände bereit; das Animationssystem wird separat wie oben angeschlossen.
+`Framework = 'auto'` detects `qbx_core`, `qb-core` or `es_extended`, in that order, and otherwise runs without a framework. Framework integration reads player state; animation playback is connected separately as described above.
 
-Für eine feste Auswahl:
+To select a framework explicitly:
 
 ```lua
-Framework = 'qbcore', -- alternativ qbox, esx oder standalone
+Framework = 'qbcore', -- alternatively qbox, esx or standalone
 ```
 
-Abweichende Ressourcennamen in `FrameworkResources` eintragen. QBCore/Qbox sperren unter anderem bei Tod, Last Stand, Handschellen und fehlenden Spielerdaten. ESX berücksichtigt Ladezustand und Tod. Zusätzlich werden die nativen Spielerzustände, der UI-Fokus und die konfigurierten State Bags geprüft.
+Use `FrameworkResources` for renamed framework resources. QBCore/Qbox checks include death, last stand, handcuffs and unavailable player data. ESX checks include player loading and death. Native player conditions, UI focus and configured state bags are also checked.
 
-`BlockedStates` enthält Zustände, die bei `true` sperren; `DenyFalseStates` enthält Zustände, die bei `false` sperren. Zusätzliche lokale Serverregeln lassen sich in `CanPlay` hinterlegen:
+`BlockedStates` lists flags that block playback when `true`; `DenyFalseStates` lists flags that block it when `false`. Add local server rules through `CanPlay`:
 
 ```lua
 CanPlay = function()
     if LocalPlayer.state.inEvent then
-        return false, 'Während des Events nicht verfügbar.'
+        return false, 'Animations are unavailable during this event.'
     end
     return true
 end,
 ```
 
-Diese Prüfung ersetzt keine Zugriffsregeln des eigentlichen Animationssystems. Eigene Systeme sollten ihre Berechtigungsprüfung auch im Adapter ausführen.
+These checks do not replace the animation system's access rules. Custom integrations should also check their own permissions inside the adapter.
 
-## Eigenes Animationssystem
+## Connect a custom animation system
 
-`resources/ks_streamdeck/examples/custom_adapter.lua` zeigt den Anschluss eines Systems mit bekannten Animations-Dictionaries und Clips. Das Beispiel ist eine Vorlage: Die dort verwendete `MyEmotes`-Schnittstelle muss durch die eigene Implementierung ersetzt werden. Zuerst `adapters/common.lua`, dann das angepasste Beispiel innerhalb der eigenen Animationsressource laden.
+`resources/ks_streamdeck/examples/custom_adapter.lua` shows how to connect a system with known animation dictionaries and clips. Replace the illustrative `MyEmotes` interface with your implementation. Load `adapters/common.lua` and then your adapted example inside the animation resource.
 
-Für vollständig eigene Ausführung gibt es `examples/animation_provider.lua`. Der Client-Export `RegisterAnimationProvider(id, provider)` erwartet:
+For custom playback handling, see `examples/animation_provider.lua`. The client export `RegisterAnimationProvider(id, provider)` accepts:
 
-- `catalog()`: Liste mit `id`, `label`, `category` und optional `keywords`.
-- `play(id, canContinue)`: Starten; nur bei erfolgreichem Start `true` zurückgeben.
-- `stop()`: Nur die eigene Animation beenden.
-- `current()`: ID der tatsächlich laufenden eigenen Animation oder `nil`.
-- Optional `canPlay(id)`: Eigene Berechtigungen und Spielerzustände prüfen.
+- `catalog()`: entries containing `id`, `label`, `category` and optional `keywords`.
+- `play(id, canContinue)`: start playback; return `true` only when it actually starts.
+- `stop()`: stop only the provider's own animation.
+- `current()`: the ID of the provider's animation actually playing, or `nil`.
+- Optional `canPlay(id)`: check the provider's permissions and player conditions.
 
-Nach jedem asynchronen Laden und unmittelbar vor dem Start muss `canContinue()` geprüft werden. Bei Systemen, die Starts in eigene Hintergrund-Threads verlagern, muss diese Prüfung in deren Startpfad integriert werden; ein äußerer Wrapper allein kann das nicht garantieren. Der Beispieladapter prüft zusätzlich anhand der nativen Animation, ob der Start tatsächlich erfolgt ist.
+Call `canContinue()` after asynchronous loading and immediately before playback. If an engine schedules playback in a separate background thread, integrate this check into that start path; an outer wrapper cannot guarantee it. The shared adapter also checks native playback state to verify a start.
 
-Der Katalog darf bis zu 10.000 Einträge enthalten. IDs müssen kurze, stabile Kennungen sein. Es werden Metadaten übertragen, keine frei ausführbaren Befehle, Skripte oder Events vom Desktop. Beim Stoppen der Eigentümerressource wird deren Anbieter entfernt.
+The shared catalog supports up to 10,000 entries. Use short, stable IDs. The bridge transfers catalog metadata, not arbitrary desktop-provided commands, scripts or events. Stopping the owner resource removes its provider.
 
-## Verbindung und Neustarts
+## Connections and restarts
 
-Die Verbindung gilt für die gewählte Serversitzung. Bei einem kurzen Neustart von `ks_streamdeck` wird sie automatisch wiederhergestellt; das Wiederaufnahmefenster beträgt ungefähr 25 Sekunden. Eine neue Spielsitzung, ein Serverwechsel oder eine längere Unterbrechung kann erneutes **Verbinden** erfordern. Eine dauerhaft globale Kopplung über beliebige Serversitzungen hinweg ist nicht vorgesehen.
+Pairing belongs to the selected server session. A short restart of `ks_streamdeck` reconnects automatically, with a recovery window of approximately 25 seconds. A new game session, server switch or longer interruption can require clicking **Connect** again. Pairing is not permanent across arbitrary server sessions.
 
-Der manuelle Kopplungscode unter den erweiterten Einstellungen ist nur ein optionaler Ersatzweg. Für den normalen Verbindungsablauf muss der Server keinen Chat anbieten.
+Code pairing in the expandable settings is an optional fallback. The normal connection workflow does not require a server chat resource.
 
-## Fehler finden und testen
+## Troubleshooting and testing
 
-- **Keine Sitzung gefunden:** Auf dem Server muss `ks_streamdeck` laufen; FiveM und Stream Deck müssen auf demselben PC geöffnet sein. Port 39175 darf nicht von einer anderen Anwendung belegt sein.
-- **Nur Beispielanimationen sichtbar:** Adapter im Manifest des Animationssystems prüfen. Er muss nach dessen eigenen Skripten geladen werden. Beide Ressourcen neu starten.
-- **Anbieter meldet Fehler:** Die FiveM-Konsole mit F8 öffnen. Anbietername und Fehler helfen dabei, einen abweichenden Fork oder fehlende Schnittstellen zu erkennen.
-- **Animation gesperrt:** Spielerzustände, Framework-Auswahl und Regeln des Animationssystems prüfen.
-- **Status prüfen:** In einem lokalen Client-Skript liefert `exports.ks_streamdeck:GetStatus()` Verbindung, aktive Animation, registrierte Anbieter und erkanntes Framework.
+- **No session found:** `ks_streamdeck` must be running on the server. FiveM and Stream Deck must run on the same PC, with port 39175 available.
+- **Only example animations appear:** check the adapter in the animation resource's manifest. It must load after that resource's own scripts. Restart both resources.
+- **Provider error:** open FiveM's F8 console. The provider name and error can identify missing interfaces or an incompatible fork.
+- **Animation blocked:** check player state, framework selection and the animation system's restrictions.
+- **Inspect status:** a local client script can call `exports.ks_streamdeck:GetStatus()` for the connection, active animation, registered providers and detected framework.
 
-Zum Abnahmetest auf dem eigenen Server: normale Animation und Prop starten/stoppen, UI öffnen, Tod/Handschellen prüfen, Animationsressource neu starten und anschließend `ks_streamdeck` neu starten. Dabei darf die Steuerung keine fremde laufende Aufgabe abbrechen. Die automatisierten Tests simulieren Anbieter-Schnittstellen und Spielerzustände; sie ersetzen keinen Test mit der konkret installierten Version im Spiel.
+Test on your server before distribution: start/stop a normal emote and a prop emote, open a focused UI, check death and handcuff restrictions, restart the animation resource, then restart `ks_streamdeck`. The integration must not cancel another resource's unrelated task. Automated tests simulate provider interfaces and player state; they do not replace in-game tests with the installed versions.
 
-## Aus dem Quellcode bauen
+## Build from source
 
-Benötigt werden Node.js 20 oder neuer, npm, Python 3 und für die Ressourcentests Lua 5.4. Im Repository:
+Install Node.js 20 or later, npm, Python 3, and Lua 5.4 for the resource tests. From the repository:
 
 ```sh
 cd plugin
@@ -128,6 +138,10 @@ npm run test:browser
 npm run release
 ```
 
-Die fertigen Installationsdateien und SHA-256-Prüfsummen liegen danach unter `dist/`. Das Bundle enthält die Ressource, das installierbare Stream Deck Plugin und diese Anleitung. Zum direkten Installieren aus dem Quellcode kann der Ordner `resources/ks_streamdeck` verwendet werden.
+Installers and SHA-256 checksums are written to `dist/`. The bundle includes the FiveM resource, companion plugin and both language versions of this guide. For source installation, use `resources/ks_streamdeck` directly.
 
-Hinweise zu eingebundenen Drittanbieter-Komponenten stehen in `plugin/com.kyuubisoft.fivem.sdPlugin/THIRD-PARTY-NOTICES.txt`. Die Animationssysteme selbst werden nicht mitgeliefert: [RPEmotes Reborn](https://github.com/alberttheprince/rpemotes-reborn), [dpEmotes](https://github.com/andristum/dpemotes), [Scully Emote Menu](https://github.com/Scullyy/scully_emotemenu).
+## Support and third-party components
+
+Report bugs through [GitHub Issues](https://github.com/KyuubiDDragon/ks-streamdeck/issues). Include the resource/plugin version, framework, animation system and version, reproduction steps, and relevant F8 errors. Do not include pairing credentials.
+
+Bundled dependency notices are in `plugin/com.kyuubisoft.fivem.sdPlugin/THIRD-PARTY-NOTICES.txt`. Animation systems are installed separately: [RPEmotes Reborn](https://github.com/alberttheprince/rpemotes-reborn), [dpEmotes](https://github.com/andristum/dpemotes), [Scully Emote Menu](https://github.com/Scullyy/scully_emotemenu).

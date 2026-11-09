@@ -21,7 +21,7 @@ test('packaged SDK entrypoint registers, configures a button and receives actual
   await until(()=>messages.find(msg=>msg.event==='registerPlugin'));
   const event=(type,payload={})=>sd.send(JSON.stringify({event:type,action:'com.kyuubisoft.fivem.animation',context:'key-1',device:'device',payload}));
   event('willAppear',{controller:'Keypad',coordinates:{column:0,row:0},settings:{}});
-  await until(()=>messages.find(msg=>msg.event==='setTitle'&&msg.payload.title==='Nicht\nverbunden'));
+  await until(()=>messages.find(msg=>msg.event==='setTitle'&&msg.payload.title==='Not\nconnected'));
   event('propertyInspectorDidAppear');
   const game=new WebSocket('ws://127.0.0.1:39175/v1/fivem',{origin:'https://cfx-nui-ks_streamdeck'});
   t.after(()=>game.terminate()); const gameMessages=[]; game.on('message',raw=>gameMessages.push(JSON.parse(raw))); await once(game,'open');

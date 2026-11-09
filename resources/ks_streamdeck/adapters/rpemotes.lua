@@ -2,16 +2,16 @@
 local function permitted(entry)
     local state = LocalPlayer and LocalPlayer.state
     if state and state.canEmote == false then
-        return false, 'Emotes derzeit gesperrt.'
+        return false, 'Emotes are currently blocked.'
     end
     if
         type(HasEmotePermission) == 'function'
         and not HasEmotePermission(entry.name, entry.emoteType)
     then
-        return false, 'Keine Berechtigung für diese Animation.'
+        return false, 'You do not have permission to use this animation.'
     end
     if Config and Config.AdultEmotesDisabled and entry.adult then
-        return false, 'Animation deaktiviert.'
+        return false, 'Animation is disabled.'
     end
     return true
 end

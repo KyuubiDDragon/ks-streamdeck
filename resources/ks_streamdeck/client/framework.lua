@@ -19,7 +19,7 @@ function StreamDeckFramework.canPlay()
     end
     local resource = cfg.FrameworkResources[mode]
     if not resource or GetResourceState(resource) ~= 'started' then
-        return false, 'Spieler-Framework nicht bereit.'
+        return false, 'Player framework is not ready.'
     end
     local ok, data = pcall(function()
         if mode == 'qbox' then
@@ -35,26 +35,26 @@ function StreamDeckFramework.canPlay()
         return esx.GetPlayerData()
     end)
     if not ok or type(data) ~= 'table' then
-        return false, 'Spielerdaten nicht bereit.'
+        return false, 'Player data is not ready.'
     end
     if LocalPlayer and LocalPlayer.state and LocalPlayer.state.isLoggedIn == false then
-        return false, 'Charakter nicht angemeldet.'
+        return false, 'Character is not logged in.'
     end
     if mode == 'esx' then
         if data.dead then
-            return false, 'Charakter ist bewusstlos.'
+            return false, 'Character is unconscious.'
         end
         return true
     end
     local metadata = data.metadata
     if type(metadata) ~= 'table' then
-        return false, 'Spielerdaten nicht bereit.'
+        return false, 'Player data is not ready.'
     end
     if metadata.isdead or metadata.inlaststand then
-        return false, 'Charakter ist bewusstlos.'
+        return false, 'Character is unconscious.'
     end
     if metadata.ishandcuffed then
-        return false, 'Charakter ist gefesselt.'
+        return false, 'Character is handcuffed.'
     end
     return true
 end
